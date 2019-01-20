@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SMB3 Card Game Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8"/>
+</head>
+
+<body style="background-color:black">
+
+<img src="img/ncard.png" id="0" name="ncard">
+<img src="img/ncard.png" id="1" name="ncard">
+<img src="img/ncard.png" id="2" name="ncard">
+<img src="img/ncard.png" id="3" name="ncard">
+<img src="img/ncard.png" id="4" name="ncard">
+<img src="img/ncard.png" id="5" name="ncard">
+
+<img src="img/ncard.png" id="6" name="ncard">
+<img src="img/ncard.png" id="7" name="ncard">
+<img src="img/ncard.png" id="8" name="ncard">
+<img src="img/ncard.png" id="9" name="ncard">
+<img src="img/ncard.png" id="10" name="ncard">
+<img src="img/ncard.png" id="11" name="ncard">
+
+<img src="img/ncard.png" id="12" name="ncard">
+<img src="img/ncard.png" id="13" name="ncard">
+<img src="img/ncard.png" id="14" name="ncard">
+<img src="img/ncard.png" id="15" name="ncard">
+<img src="img/ncard.png" id="16" name="ncard">
+<img src="img/ncard.png" id="17" name="ncard">
+
+<p>
+<button onclick="location.reload();">Reset</button>
+</p>
+
+<img id="menu" class="context-menu" src="img/card-icons.png">
+
+<script>
+var img = []
+img[0] = "img/ncard.png";
+img[1] = "img/mushroom.png";
+img[2] = "img/flower.png";
+img[3] = "img/star.png";
+img[4] = "img/10.png";
+img[5] = "img/20.png";
+img[6] = "img/1up.png";
+
+var images = document.querySelectorAll('[name=ncard]');
+for(var i=0; i < images.length; i++) {
+    images[i].addEventListener('click', toggle(), false);
+    images[i].addEventListener('contextmenu', revert(), false);
+}
+
+var menu = document.querySelector("#menu");
+var menuOpen = false;
+menu.addEventListener('click', select(), false);
+menu.addEventListener('contextmenu', close(), false);
+
+var targetElement;
+var id;
+
+function toggle() {
+    <!-- When a card is clicked, get the id and display the menu -->
+    return function(event) {
+        event.preventDefault();
+        targetElement = event.target || event.srcElement;
+        id = targetElement.id;
+        
+        console.log(event + ", id = " + id);
+        
+        menu.classList.add("context-menu--active");
+        menuOpen = true;
+        
+        var clickCoords = getPosition(event);
+        var clickCoordsX = clickCoords.x;
+        var clickCoordsY = clickCoords.y;
+        
+        var menuWidth = menu.offsetWidth + 4;
+        var menuHeight = menu.offsetHeight + 4;
+        var windowWidth = window.innerWidth;
+        var windowHeight = window.innerHeight;
+        
+        if ((windowWidth - clickCoordsX) < menuWidth) {
+            menu.style.left = windowWidth - menuWidth + "px";
+        } else {
+            menu.style.left = clickCoordsX + "px";
+        }
+
+      if ((windowHeight - clickCoordsY) < menuHeight) {
+            menu.style.top = windowHeight - menuHeight + "px";
+          } else {
+            menu.style.top = clickCoordsY + "px";
+          }
+  
+        return false;
+    }
+}
+
+function revert() {
+    return function(event) {
+        console.log(event + " revert");
+        event.preventDefault();
+        if(menuOpen) {
+            //If menu is open, closes the menu
+            menu.classList.remove("context-menu--active");
+            menuOpen = false;
+        } else {
+            //If menu is closed, reset card to default
+            targetElement = event.target || event.srcElement;
+            targetElement.src = img[0];
+        }
+        return false;
+    }
+}
+
+function select() {
+    <!-- When a menu option is clicked, get the position and change the referenced card to the selected option -->
+    return function(event) {
+        event.preventDefault();
+        
+        var rect = event.target.getBoundingClientRect();
+        var x = event.clientX - rect.left; //x position within the element.
+        var y = event.clientY - rect.top;  //y position within the element.
+        
+        console.log(event + ", id = " + id + ", x = " + x + ", y = " + y);
+        
+        //Upper half
+        if(y <= 60) {
+            //Mushroom
+            if(x <= 55)
+                targetElement.src = img[1];
+            //Flower
+            else if(x <= 110)
+                targetElement.src = img[2];
+            //Star
+            else
+                targetElement.src = img[3];
+        }
+        //Lower half
+        else {
+            //10 Coin
+            if(x <= 55)
+                targetElement.src = img[4];
+            //20 Coin
+            else if(x <= 110)
+                targetElement.src = img[5];
+            //1up
+            else
+                targetElement.src = img[6];
+        }
+        
+        menu.classList.remove("context-menu--active");
+        menuOpen = false;
+         
+        return false;
+    }
+}
+
+function close() {
+    return function(event) {
+        console.log(event + " close");
+        event.preventDefault();
+        if(menuOpen) {
+            //If menu is open, closes the menu
+            menu.classList.remove("context-menu--active");
+            menuOpen = false;
+        }
+        
+        return false;
+    }
+}
+
+function getPosition(e) {
+  var posx = 0;
+  var posy = 0;
+
+  if (!e) var e = window.event;
+
+  if (e.pageX || e.pageY) {
+    posx = e.pageX;
+    posy = e.pageY;
+  } else if (e.clientX || e.clientY) {
+    posx = e.clientX + document.body.scrollLeft + 
+                       document.documentElement.scrollLeft;
+    posy = e.clientY + document.body.scrollTop + 
+                       document.documentElement.scrollTop;
+  }
+
+  return {
+    x: posx,
+    y: posy
+  }
+}
+
+</script>
+</body>
+</html>
